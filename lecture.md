@@ -70,7 +70,7 @@ validation_generator = test_datagen.flow_from_directory(
 ---
 
 
-### Training a model for cats and dogs from scratch
+### 1. Training a model for cats and dogs from scratch
 
 Include both data augmentation and dropout regularization since dataset is small!
 
@@ -138,6 +138,16 @@ history = model.fit_generator(
 - small datasets are not adequate for this: the representations learned may not be rich enough
   
 ---
+
+## Transfer Learning
+
+- train on a big "**source**" data set, with a big model, on one particular down
+stream tasks (say classification). Do it once and save the parameters. This is called a **pre-trained model**.
+- use these parameters for other smaller "**target** " datasets, say, for classification on new images (possibly different **domain**, or training distribution), or for image segmentation on old images(new **task**), or new images (new *task* and new *domain*)
+- less helpful if you have a large target dataset with many labels
+- will fail if source domain (where you trained big model) has nothing in common with target domain (that you want to train on smaller data set)
+
+---
 [.footer: From [Ruder](http://ruder.io/transfer-learning/)]
 
 ## Traditional machine learning
@@ -167,6 +177,27 @@ history = model.fit_generator(
 - cross-lingual adaptation for few shot learning of resource poor languages (english->nepali for example)
 
 ---
+
+>*Transfer Learning taked DL out of the sole hands of the bigcos like Google and Microsoft and puts it into out hands.*
+
+##[fit] It democratizes Deep Learning
+
+Even if more compute is needed, people can come together to do it on a base set of data..
+
+---
+
+## Our process of ever increasing sophistication
+
+1. We train a simple dog-vs-cats classifier with data augmentation and regularization (because its a small data set). We gain no benefits from the large amount of pretrained models out there, and thus from other images people have seen
+
+2. We construct features from the output of a pre-trained model on our dataset and save these features in a hdf5 file. These features are then used in a fully connected MLP classifier to do dogs vs cats. We are getting some benefit from pretrained models. We cant do data augmentation any more
+
+3. We now put the pretrained models as our "convolutional base" and slap on some fully connected layers. We freeze the convolutional base and train with a mediumish learning rate. This is similar to (2) except we have a bigger network at a good init point and we only explore the subspace of the new weights. We can now bring back data augmentation.
+
+4. Now we slowly unfreeze the convolutional base. We must use small learning rates not to upset the weights from the pre-trained model. But we are now training on the full space of weights, with the new data, and can drive the classifier to specialize in dogs vs cats. We can also have data augmentation. Additionally we'll use some more tricks.
+
+---
+
 
 ## Sequential Transfer learning: Using a pre-trained net
 
